@@ -8,6 +8,6 @@
 
 		public string Observation {  get; set; }
 
-		public ICollection<PayMode> PayModes { get; set; } = default!;
+		public ICollection<PayMode>? PayModes { get; set; } = default!;
 	}
 }
