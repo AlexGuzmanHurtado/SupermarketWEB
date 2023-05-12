@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace SupermarketWEB.Models
 {
@@ -16,6 +16,6 @@ namespace SupermarketWEB.Models
 
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public ICollection<Category>? categories { get; set; }
     }
 }
