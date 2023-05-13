@@ -1,6 +1,6 @@
 ﻿namespace SupermarketWEB.Models
 {
-	public class Providers
+	public class Provider
 	{
 		public int id { get; set; }
 
@@ -17,5 +17,6 @@
 		public string Email { get; set; }
 
 		public string Phone { get; set; }
+
 	}
 }
