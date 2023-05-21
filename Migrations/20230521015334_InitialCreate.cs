@@ -42,6 +42,22 @@ namespace SupermarketWEB.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Providers",
                 columns: table => new
                 {
@@ -61,25 +77,23 @@ namespace SupermarketWEB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(6,2)", nullable: false),
-                    Stock = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Users_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -102,6 +116,30 @@ namespace SupermarketWEB.Migrations
                         column: x => x.DetailId,
                         principalTable: "Details",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryProduct",
+                columns: table => new
+                {
+                    ProductsId = table.Column<int>(type: "int", nullable: false),
+                    categoriesId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryProduct", x => new { x.ProductsId, x.categoriesId });
+                    table.ForeignKey(
+                        name: "FK_CategoryProduct_Categories_categoriesId",
+                        column: x => x.categoriesId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryProduct_Products_ProductsId",
+                        column: x => x.ProductsId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,6 +169,11 @@ namespace SupermarketWEB.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategoryProduct_categoriesId",
+                table: "CategoryProduct",
+                column: "categoriesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Invoices_DetailId",
                 table: "Invoices",
                 column: "DetailId");
@@ -146,28 +189,34 @@ namespace SupermarketWEB.Migrations
                 column: "PayModeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_CategoryId",
-                table: "Products",
-                column: "CategoryId");
+                name: "IX_Users_UserId",
+                table: "Users",
+                column: "UserId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PayModes");
+                name: "CategoryProduct");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "PayModes");
 
             migrationBuilder.DropTable(
                 name: "Providers");
 
             migrationBuilder.DropTable(
-                name: "Invoices");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Invoices");
 
             migrationBuilder.DropTable(
                 name: "Details");

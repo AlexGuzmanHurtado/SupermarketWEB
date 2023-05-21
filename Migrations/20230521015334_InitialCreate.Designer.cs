@@ -12,7 +12,7 @@ using SupermarketWEB.Data;
 namespace SupermarketWEB.Migrations
 {
     [DbContext(typeof(SupermarketContext))]
-    [Migration("20230510050846_InitialCreate")]
+    [Migration("20230521015334_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace SupermarketWEB.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CategoryProduct", b =>
+                {
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("categoriesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductsId", "categoriesId");
+
+                    b.HasIndex("categoriesId");
+
+                    b.ToTable("CategoryProduct");
+                });
 
             modelBuilder.Entity("SupermarketWEB.Models.Category", b =>
                 {
@@ -155,12 +170,10 @@ namespace SupermarketWEB.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("SupermarketWEB.Models.Providers", b =>
+            modelBuilder.Entity("SupermarketWEB.Models.Provider", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -200,6 +213,47 @@ namespace SupermarketWEB.Migrations
                     b.ToTable("Providers");
                 });
 
+            modelBuilder.Entity("SupermarketWEB.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CategoryProduct", b =>
+                {
+                    b.HasOne("SupermarketWEB.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SupermarketWEB.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("categoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SupermarketWEB.Models.Invoice", b =>
                 {
                     b.HasOne("SupermarketWEB.Models.Detail", null)
@@ -218,20 +272,11 @@ namespace SupermarketWEB.Migrations
                         .HasForeignKey("PayModeId");
                 });
 
-            modelBuilder.Entity("SupermarketWEB.Models.Product", b =>
+            modelBuilder.Entity("SupermarketWEB.Models.User", b =>
                 {
-                    b.HasOne("SupermarketWEB.Models.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("SupermarketWEB.Models.Category", b =>
-                {
-                    b.Navigation("Products");
+                    b.HasOne("SupermarketWEB.Models.User", null)
+                        .WithMany("Users")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("SupermarketWEB.Models.Detail", b =>
@@ -247,6 +292,11 @@ namespace SupermarketWEB.Migrations
             modelBuilder.Entity("SupermarketWEB.Models.PayMode", b =>
                 {
                     b.Navigation("PayModes");
+                });
+
+            modelBuilder.Entity("SupermarketWEB.Models.User", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }
